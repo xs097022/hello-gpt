@@ -11,9 +11,9 @@ const Msg = ((exports) => {
 const Canvas = ((exports) => {
     const t = document.getElementById('canvas');
     exports.set = (fn) => {
-        t.innerHTML =  (Store.Map.logList || []).filter(fn).map((i) => {
+        t.innerHTML =  (Store.Map.logList || []).filter(fn).map((i, index) => {
             return `
-            <div class="tr">
+            <div class="tr" data-index="${index}">
                 <div>
                     <textarea></textarea>
                 </div>
@@ -29,7 +29,7 @@ const Canvas = ((exports) => {
                 </div>
             </div>
             `;
-        });
+        }).join('\n');
     };
     return exports;
 })({});
@@ -41,20 +41,23 @@ const Filter = ((exports) => {
             if(!i.getAttribute('selected')) {
                 t.querySelector('[selected]').removeAttribute('selected');
                 i.setAttribute('selected', true);
-                const fn = [
-                    i => !i.rasa && !i.check0,
-                    i => i.rasa && !i.check0,
-                    i => !i.rasa && i.check0 && !i.check1.length,
-                    i => i.rasa && i.check0 && !i.check1.length,
-                    i => !i.rasa && i.check0 && i.check1.length,
-                    i => i.rasa && i.check0 && i.check1.length && i.check1.indexOf(i.rasa) === -1,
-                    i => i.rasa && i.check0 && i.check1.length && i.check1.indexOf(i.rasa) !== -1,
-                    i => i.flag
-                ][i.dataset.index];
-                Canvas.set(fn);
+                exports.set(i.dataset.index);
             }
         });
     });
+    exports.set = (index) => {
+        const fn = [
+            i => !i.rasa && !i.check0,
+            i => i.rasa && !i.check0,
+            i => !i.rasa && i.check0 && !i.check1.length,
+            i => i.rasa && i.check0 && !i.check1.length,
+            i => !i.rasa && i.check0 && i.check1.length,
+            i => i.rasa && i.check0 && i.check1.length && i.check1.indexOf(i.rasa) === -1,
+            i => i.rasa && i.check0 && i.check1.length && i.check1.indexOf(i.rasa) !== -1,
+            i => i.flag
+        ][index];
+        Canvas.set(fn);
+    };
     return exports;
 })({});
 
@@ -224,6 +227,7 @@ const main0 = async () => {
     };
     Map0['0-0'] = () => {
         Msg.set('同步失败')
+        return ['1', undefined];
     };
     Map0['0-1'] = async (msg) => {
         Msg.set('开始同步问答库')
@@ -236,6 +240,7 @@ const main0 = async () => {
     };
     Map0['0-1-0'] = () => {
         Msg.set('同步问答库失败')
+        return ['1', undefined];
     };
     Map0['0-1-1'] = async (msg) => {
         Msg.set('开始同步问答记录')
@@ -246,6 +251,7 @@ const main0 = async () => {
     };
     Map0['0-1-1-0'] = () => {
         Msg.set('同步问答记录失败')
+        return ['1', undefined];
     };
     Map0['0-1-1-1'] = async (msg) => {
         Msg.set('开始RASA命中')
@@ -254,6 +260,10 @@ const main0 = async () => {
             i.qs.forEach(ii => {
                 ret[ii] = 1;
             });
+            return ret;
+        }, {});
+        const Map1 = Store.Map.qaList.reduce((ret, i) => {
+            ret[i.id] = i.qs[0];
             return ret;
         }, {});
         Store.Map.logList = msg.filter(i => {
@@ -269,7 +279,13 @@ const main0 = async () => {
                     const nn = --n;
                     const [_, x] = await rasaApi.modelParse(Store.Map.logList[nn].q);
                     try {
-                        Store.Map.logList.rasa = JSON.parse(x);
+                        Store.Map.logList[nn]._rasa = JSON.parse(x);
+                        try {
+                            const name =Store.Map.logList[nn]._rasa.intent.name;
+                            if(name !== 'nlu_fallback') {
+                                Store.Map.logList[nn].rasa = Map1[name.replace(/intent/, '')];
+                            }
+                        }
                         Store.MM();
                     } catch(e) {
                         n = 0;
@@ -284,6 +300,7 @@ const main0 = async () => {
     };
     Map0['0-1-1-1-0'] = () => {
         Msg.set('RASA命中失败')
+        return ['1', undefined];
     };
     Map0['0-1-1-1-1'] = async () => {
         Msg.set('开始GPT相关')
@@ -306,6 +323,7 @@ const main0 = async () => {
     };
     Map0['0-1-1-1-1-0'] = () => {
         Msg.set('GPT相关失败');
+        return ['1', undefined];
     };
     Map0['0-1-1-1-1-1'] = async () => {
         Msg.set('开始GPT命中');
@@ -318,8 +336,11 @@ const main0 = async () => {
                     const nn = --n;
                     const index = nn / Store.Map.qaList.length >> 0;
                     const indexindex = nn % Store.Map.qaList.length >> 0;
-                    if(Store.Map.logList[index].check0) {
-                        Store.Map.logList[index].check1 = await wrapGptCheck1(Store.Map.logList[index].q, Store.Map.qaList[indexindex].qs[0]);
+                    if(Store.Map.logList[index].check0 && indexindex < 20) {
+                        const q = Store.Map.logList[index].q;
+                        const qq = Store.Map.qaList[indexindex].qs[0];
+                        const f = await wrapGptCheck1(q, qq);
+                        f && Store.Map.logList[index].check1.push(qq);
                         Store.MM();
                     }
                     return 1;
@@ -331,9 +352,11 @@ const main0 = async () => {
     };
     Map0['0-1-1-1-1-1-0'] = () => {
         Msg.set('GPT命中失败');
+        return ['1', undefined];
     };
     Map0['0-1-1-1-1-1-1'] = () => {
         Msg.set('GPT命中结束');
+        return ['1', undefined];
     };
     //Run.run(MapFn.new(Map0), '0', (p, status) => p + '-' + status, {}, () => {});
     document.getElementById('start').addEventListener('click', () => {
