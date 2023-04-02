@@ -285,6 +285,7 @@ const main0 = async () => {
                             if(name !== 'nlu_fallback') {
                                 Store.Map.logList[nn].rasa = Map1[name.replace(/intent/, '')];
                             }
+                        } catch(e) {
                         }
                         Store.MM();
                     } catch(e) {
