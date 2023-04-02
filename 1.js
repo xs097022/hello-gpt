@@ -30,6 +30,13 @@ const Canvas = ((exports) => {
             </div>
             `;
         }).join('\n');
+        [].forEach.call(t.children, (i, index) => {
+            const d = Store.Map.logList[index];
+            i.children[0].children[0].value = d.q;
+            i.children[1].children[0].value = d.a;
+            i.children[2].children[0].innerText = `RASA${d.rasa ? '命中' + d.rasa : '未命中'}`;
+            i.children[2].children[1].innerText = `GPT${d.check0 ? !d.check1.length ? '未命中' : '命中' + d.check1 : '不相关'}`;
+        });
     };
     return exports;
 })({});
