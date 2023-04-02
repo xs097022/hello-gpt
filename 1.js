@@ -100,14 +100,9 @@ const rasaApi = ((exports) => {
 })({});
 
 const gptApi = ((exports) => {
-    exports.check0 = (msg) => {
-        return sendMsgToCrx.send(extensionId, sendMsgToCrx.getMsg('https://web-gpt-demo.com/chat/?username=1&content=3&_stream=true', {
-        }, {}));
-    };
-    exports.check1= (msg) => {
-        return sendMsgToCrx.send(extensionId, sendMsgToCrx.getMsg('https://meta.adwetec.com/prod-api/robot/http-robot-1/model/parse', {
-            text: msg
-        }, {}));
+    exports.say = async (msg) => {
+        const [headers, res] = await sendMsgToCrx.send(extensionId, sendMsgToCrx.getMsg('https://web-gpt-demo.com/chat/?username=1&content=' + encodeURIComponent(msg) + '&_stream=true', {}, {}));
+        return res;
     };
     return exports;
 })({});
@@ -188,23 +183,31 @@ const main0 = async () => {
             return Map[i.q];
         });
         Store.MM();
+        const ret = ['1', undefined];
         const fn = ((n) => {
             return async () => {
                 if(n === 0) {
                     return undefined;
                 } else {
                     const nn = --n;
-                    const x = await rasaApi.modelParse(Store.Map.logList[nn].q);
-                    console.log(x);
+                    const [_, x] = await rasaApi.modelParse(Store.Map.logList[nn].q);
+                    try {
+                        Store.Map.logList.rasa = JSON.parse(x);
+                    } catch(e) {
+                        n = 0;
+                        ret[0] = '0';
+                    }
+                    return 1;
                 }
             };
         })(Store.Map.logList.length);
-        await Batch.run(2, fn);
-        return ['0', undefined];
+        await Batch.run(100, fn);
+        return ret;
     };
     Map0['0-1-1-1-0'] = () => {
     };
     Map0['0-1-1-1-1'] = async () => {
+        const ret = ['0', undefined];
         const fn = ((n) => {
             return async () => {
                 if(n === 0) {
@@ -217,7 +220,8 @@ const main0 = async () => {
                 }
             };
         })(Store.Map.logList.length);
-        await Batch.run(2, fn);
+        await Batch.run(100, fn);
+        return ret;
     };
     Run.run(MapFn.new(Map0), '0', (p, status) => p + '-' + status, {}, () => {});
 };
