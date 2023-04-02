@@ -100,7 +100,12 @@ const rasaApi = ((exports) => {
 })({});
 
 const gptApi = ((exports) => {
-    exports.modelParse = (msg) => {
+    exports.check0 = (msg) => {
+        return sendMsgToCrx.send(extensionId, sendMsgToCrx.getMsg('https://meta.adwetec.com/prod-api/robot/http-robot-1/model/parse', {
+            text: msg
+        }, {}));
+    };
+    exports.check1= (msg) => {
         return sendMsgToCrx.send(extensionId, sendMsgToCrx.getMsg('https://meta.adwetec.com/prod-api/robot/http-robot-1/model/parse', {
             text: msg
         }, {}));
@@ -184,14 +189,16 @@ const main0 = async () => {
             return Map[i.q];
         });
         Store.MM();
-        const fn = async ((n) => {
-            if(n === 0) {
-                return undefined;
-            } else {
-                const nn = --n;
-                const x = await rasaApi.modelParse(Store.Map.logList[nn].q);
-                console.log(x);
-            }
+        const fn = ((n) => {
+            return async () => {
+                if(n === 0) {
+                    return undefined;
+                } else {
+                    const nn = --n;
+                    const x = await rasaApi.modelParse(Store.Map.logList[nn].q);
+                    console.log(x);
+                }
+            };
         })(Store.Map.logList.length);
         await Batch.run(2, fn);
         return ['0', undefined];
@@ -199,15 +206,17 @@ const main0 = async () => {
     Map0['0-1-1-1-0'] = () => {
     };
     Map0['0-1-1-1-1'] = async () => {
-        const fn = async ((n) => {
-            if(n === 0) {
-                return undefined;
-            } else {
-                const nn = --n;
-                const x = await gptApi.check0(Store.Map.logList[nn]);
-                const xx = await gptApi.check1(Store.Map.logList[nn]);
-                console.log(x);
-            }
+        const fn = ((n) => {
+            return async () => {
+                if(n === 0) {
+                    return undefined;
+                } else {
+                    const nn = --n;
+                    const x = await gptApi.check0(Store.Map.logList[nn]);
+                    const xx = await gptApi.check1(Store.Map.logList[nn]);
+                    console.log(x);
+                }
+            };
         })(Store.Map.logList.length);
         await Batch.run(2, fn);
     };
