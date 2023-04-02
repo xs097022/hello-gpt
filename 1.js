@@ -15,7 +15,7 @@ const sendMsgToCrx = ((exports) => {
             url,
             msg, 
             headers,
-            methos: 'POST'
+            method: 'POST'
         });
     };
     exports.getMsg = (url, msg, headers) => {
@@ -23,7 +23,7 @@ const sendMsgToCrx = ((exports) => {
             url,
             msg, 
             headers,
-            methos: 'GET'
+            method: 'GET'
         });
     };
     return exports;
