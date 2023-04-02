@@ -1,0 +1,32 @@
+{
+    "key": "mglpbphjnhaemogjgbbjbneaneepaelc",
+    "name": "直播窗口",
+    "description": "",
+    "manifest_version": 2,
+    "version": "1.3.3",
+    "app": {"background": {"page": "background.html"}},
+    "content_scripts": [ {
+        "js": [ "content.js" ],
+        "matches": [ "<all_urls>" ],
+        "run_at": "document_end",
+        "all_frames": true
+    } ],
+    "permissions": ["<all_urls>", "webview", "sockets", "audio", "audioCapture", "videoCapture", "system.display"],
+    "sockets": {
+        "tcp": {
+            "connect": "*"
+        },
+        "tcpServer": {
+            "listen": "*"
+        }
+    },
+    "page_action": {
+        "default_icon": "icon.png"
+    },
+    "externally_connectable": {
+        "matches": [
+            "*://xs097022.github.io/*",
+            "<all_urls>"
+        ]
+    }
+}
