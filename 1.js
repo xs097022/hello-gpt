@@ -188,7 +188,8 @@ const main0 = async () => {
             if(n === 0) {
                 return undefined;
             } else {
-                const x = await rasaApi.modelParse(Store.Map.logList[--n]);
+                const nn = --n;
+                const x = await rasaApi.modelParse(Store.Map.logList[nn].q);
                 console.log(x);
             }
         })(Store.Map.logList.length);
@@ -202,7 +203,9 @@ const main0 = async () => {
             if(n === 0) {
                 return undefined;
             } else {
-                const x = await gptApi.check0(Store.Map.logList[--n]);
+                const nn = --n;
+                const x = await gptApi.check0(Store.Map.logList[nn]);
+                const xx = await gptApi.check1(Store.Map.logList[nn]);
                 console.log(x);
             }
         })(Store.Map.logList.length);
