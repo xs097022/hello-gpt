@@ -213,15 +213,18 @@ const main0 = async () => {
         }
     };
     const wrapGptCheck0 = async (msg) => {
-        const _msg = await gptApi.say(Store.Map.Check0Msg.replace(/{MSG}/g, msg));
+        const _msg = await gptApi.say(Store.Map.Check0Msg.replace(/{MSG0}/g, msg));
+        console.log(Store.Map.Check0Msg.replace(/{MSG0}/g, msg), _msg);
         return /是/.test(_msg);
     };
     const wrapGptCheck1 = async (msg0, msg1) => {
         const _msg = await gptApi.say(Store.Map.Check1Msg.replace(/{MSG0}/g, msg0).replace(/{MSG1}/g, msg1));
+        console.log(Store.Map.Check1Msg.replace(/{MSG0}/g, msg0).replace(/{MSG1}/g, msg1), _msg);
         return /是/.test(_msg);
     };
     const Map0 = {};
     Map0['0'] = async () => {
+        await gptApi.say('请切换到中文语境');
         const [status, msg] = await wrapApiLogin();
         return [status, msg];
     };
