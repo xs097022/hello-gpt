@@ -219,6 +219,7 @@ const main0 = async () => {
         })(Store.Map.logList.length);
         await Batch.run(2, fn);
     };
+    Run.run(MapFn.new(Map0), '0', (p, status) => p + '-' + status, {}, () => {});
 };
 
 main0();
