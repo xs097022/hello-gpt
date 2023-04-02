@@ -20,7 +20,7 @@ const Canvas = ((exports) => {
                 <div>
                     <textarea></textarea>
                 </div>
-                <div>
+                <div style="width: 100px;">
                     <i>RASA命中22</i>
                     <i>GPT命中22</i>
                 </div>
