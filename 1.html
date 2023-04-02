@@ -3,9 +3,101 @@
     <head>
         <meta charset="utf8">
         <title>定</title>
+        <style>
+* {
+    margin: 0;
+    padding: 0;
+}
+#msg {
+    position: fixed;
+    top: 0;
+    width: 80%;
+    left: 10%;
+    background: #000;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    line-height: 24px;
+    min-height: 24px;
+    padding: 10px;
+}
+#start {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+}
+#filter {
+    margin-top: 100px;
+}
+#filter i {
+    display: inline-block;
+    padding: 5px;
+    background: #ccc;
+    margin: 5px;
+    color: #fff;
+    font-size: 12px;
+    cursor: pointer;
+}
+#filter i:hover {
+    background: #66ccff;
+}
+#filter i[selected] {
+    background: #66ccff;
+}
+.tr {
+    display: flex;
+    flex-wrap: nowrap;
+}
+.tr > div {
+    flex-grow: 1;
+    padding: 0 10px;
+}
+.tr textarea {
+    width: 100%;
+    padding: 5px;
+    font-size: 12px;
+}
+.tr i {
+    display: block;
+}
+textarea {
+    resize: none;
+    outline: none;
+}
+        </style>
     </head>
     <body>
-        <button>开始</button>
+        <div id="msg"></div>
+        <button id="start">开始</button>
+        <div id="filter">
+            <i data-index='0' selected>RASA未命中,GPT不相关</i>
+            <i data-index='1'>RASA命中,GPT不相关</i>
+            <i data-index='2'>RASA未命中,GPT未命中</i>
+            <i data-index='3'>RASA命中,GPT未命中</i>
+            <i data-index='4'>RASA未命中,GPT命中</i>
+            <i data-index='5'>RASA命中,GPT命中且不同</i>
+            <i data-index='6'>RASA,GPT命中且相同</i>
+            <i data-index='7'>已标记</i>
+        </div>
+        <div id="canvas">
+            <!--
+            <div class="tr">
+                <div>
+                    <textarea></textarea>
+                </div>
+                <div>
+                    <textarea></textarea>
+                </div>
+                <div>
+                    <i>RASA命中22</i>
+                    <i>GPT命中22</i>
+                </div>
+                <div>
+                    <button>标记</button>
+                </div>
+            </div>
+            -->
+        </div>
         <script src="./1.js"></script>
     </body>
 </html>
