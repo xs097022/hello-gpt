@@ -154,7 +154,7 @@ const main0 = async () => {
     };
     Map0['0-0'] = () => {
     };
-    Map0['0-1'] = (msg) => {
+    Map0['0-1'] = async (msg) => {
         Store.Map.authHeaders = {
             Authorization: msg
         };
@@ -164,7 +164,7 @@ const main0 = async () => {
     };
     Map0['0-1-0'] = () => {
     };
-    Map0['0-1-1'] = (msg) => {
+    Map0['0-1-1'] = async (msg) => {
         Store.Map.qaList = msg;
         Store.MM();
         const [status, _msg] = await wrapApiLogList();
@@ -172,7 +172,7 @@ const main0 = async () => {
     };
     Map0['0-1-1-0'] = () => {
     };
-    Map0['0-1-1-1'] = (msg) => {
+    Map0['0-1-1-1'] = async (msg) => {
         Store.Map._logList = msg;
         const Map = Store.Map.qaList.reduce((ret, i) => {
             i.qs.forEach(ii => {
@@ -197,12 +197,12 @@ const main0 = async () => {
     };
     Map0['0-1-1-1-0'] = () => {
     };
-    Map0['0-1-1-1-1'] = () => {
+    Map0['0-1-1-1-1'] = async () => {
         const fn = async (n) => {
             if(n === 0) {
                 return undefined;
             } else {
-                const x = await rasaApi.modelParse(Store.Map.logList[--n]);
+                const x = await gptApi.check0(Store.Map.logList[--n]);
                 console.log(x);
             }
         }(Store.Map.logList.length);
