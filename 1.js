@@ -114,7 +114,7 @@ const gptApi = ((exports) => {
 
 const main0 = async () => {
     const wrapApiLogin = async () => {
-        const [headers, msg] = api.login();
+        const [headers, msg] = await api.login();
         try {
             const token = JSON.parse(msg).data.access_token;
             return ['1', token];
@@ -123,7 +123,7 @@ const main0 = async () => {
         }
     };
     const wrapApiQaList = async () => {
-        const [headers, msg] = api.qaList(Store.Map.authHeaders);
+        const [headers, msg] = await api.qaList(Store.Map.authHeaders);
         try {
             const qaList = JSON.parse(msg).rows.map(i => {
                 return {
@@ -138,7 +138,7 @@ const main0 = async () => {
         }
     };
     const wrapApiLogList = async () => {
-        const [headers, msg] = api.logList(Store.Map.authHeaders);
+        const [headers, msg] = await api.logList(Store.Map.authHeaders);
         try {
             const logList = JSON.parse(msg).rows.map(i => {
                 return {
