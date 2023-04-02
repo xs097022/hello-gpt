@@ -184,28 +184,28 @@ const main0 = async () => {
             return Map[i.q];
         });
         Store.MM();
-        const fn = async (n) => {
+        const fn = async ((n) => {
             if(n === 0) {
                 return undefined;
             } else {
                 const x = await rasaApi.modelParse(Store.Map.logList[--n]);
                 console.log(x);
             }
-        }(Store.Map.logList.length);
+        })(Store.Map.logList.length);
         await Batch.run(2, fn);
         return ['0', undefined];
     };
     Map0['0-1-1-1-0'] = () => {
     };
     Map0['0-1-1-1-1'] = async () => {
-        const fn = async (n) => {
+        const fn = async ((n) => {
             if(n === 0) {
                 return undefined;
             } else {
                 const x = await gptApi.check0(Store.Map.logList[--n]);
                 console.log(x);
             }
-        }(Store.Map.logList.length);
+        })(Store.Map.logList.length);
         await Batch.run(2, fn);
     };
 };
