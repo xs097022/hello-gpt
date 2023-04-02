@@ -130,7 +130,7 @@ const main0 = async () => {
             const logList = JSON.parse(msg).rows.map(i => {
                 return {
                     q: i.question,
-                    a: i.msg.
+                    a: i.msg
                 };
             });
             return ['1', logList];
@@ -183,6 +183,7 @@ const main0 = async () => {
                 console.log(x);
             }
         }(Store.Map.logList.length);
+        await Batch.run(2, fn);
     };
 };
 
