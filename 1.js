@@ -92,6 +92,15 @@ const api = ((exports) => {
 
 const rasaApi = ((exports) => {
     exports.modelParse = (msg) => {
+        return sendMsgToCrx.send(extensionId, sendMsgToCrx.postMsg('https://meta.adwetec.com/prod-api/robot/http-robot-1/model/parse', {
+            text: msg
+        }, {}));
+    };
+    return exports;
+})({});
+
+const gptApi = ((exports) => {
+    exports.modelParse = (msg) => {
         return sendMsgToCrx.send(extensionId, sendMsgToCrx.getMsg('https://meta.adwetec.com/prod-api/robot/http-robot-1/model/parse', {
             text: msg
         }, {}));
@@ -150,16 +159,16 @@ const main0 = async () => {
             Authorization: msg
         };
         Store.MM();
-        const [status, msg] = await wrapApiQaList();
-        return [status, msg];
+        const [status, _msg] = await wrapApiQaList();
+        return [status, _msg];
     };
     Map0['0-1-0'] = () => {
     };
     Map0['0-1-1'] = (msg) => {
         Store.Map.qaList = msg;
         Store.MM();
-        const [status, msg] = await wrapApiLogList();
-        return [status, msg];
+        const [status, _msg] = await wrapApiLogList();
+        return [status, _msg];
     };
     Map0['0-1-1-0'] = () => {
     };
@@ -175,6 +184,20 @@ const main0 = async () => {
             return Map[i.q];
         });
         Store.MM();
+        const fn = async (n) => {
+            if(n === 0) {
+                return undefined;
+            } else {
+                const x = await rasaApi.modelParse(Store.Map.logList[--n]);
+                console.log(x);
+            }
+        }(Store.Map.logList.length);
+        await Batch.run(2, fn);
+        return ['0', undefined];
+    };
+    Map0['0-1-1-1-0'] = () => {
+    };
+    Map0['0-1-1-1-1'] = () => {
         const fn = async (n) => {
             if(n === 0) {
                 return undefined;
