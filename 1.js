@@ -24,7 +24,7 @@ const MapFn = ((exports) => {
         const fn = (p) => {
             const _fn = Map[p];
             const t = typeof _fn;
-            return typeof t === 'string' ? fn(_fn) : typeof t === 'function' ? [p, _fn] : [undefined, undefined];
+            return t === 'string' ? fn(_fn) : t === 'function' ? [p, _fn] : [undefined, undefined];
         };
         return fn;
     };
@@ -101,8 +101,7 @@ const rasaApi = ((exports) => {
 
 const gptApi = ((exports) => {
     exports.check0 = (msg) => {
-        return sendMsgToCrx.send(extensionId, sendMsgToCrx.getMsg('https://meta.adwetec.com/prod-api/robot/http-robot-1/model/parse', {
-            text: msg
+        return sendMsgToCrx.send(extensionId, sendMsgToCrx.getMsg('https://web-gpt-demo.com/chat/?username=1&content=3&_stream=true', {
         }, {}));
     };
     exports.check1= (msg) => {
@@ -212,8 +211,8 @@ const main0 = async () => {
                     return undefined;
                 } else {
                     const nn = --n;
-                    const x = await gptApi.check0(Store.Map.logList[nn]);
-                    const xx = await gptApi.check1(Store.Map.logList[nn]);
+                    const x = await gptApi.check0(Store.Map.logList[nn].q);
+                    const xx = await gptApi.check1(Store.Map.logList[nn].q);
                     console.log(x);
                 }
             };
