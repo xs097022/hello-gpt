@@ -41,7 +41,7 @@ const Filter = ((exports) => {
             if(!i.getAttribute('selected')) {
                 t.querySelector('[selected]').removeAttribute('selected');
                 i.setAttribute('selected', true);
-                const t = [
+                const fn = [
                     i => !i.rasa && !i.check0,
                     i => i.rasa && !i.check0,
                     i => !i.rasa && i.check0 && !i.check1.length,
@@ -51,7 +51,7 @@ const Filter = ((exports) => {
                     i => i.rasa && i.check0 && i.check1.length && i.check1.indexOf(i.rasa) !== -1,
                     i => i.flag
                 ][i.dataset.index];
-                Canvas.set(t);
+                Canvas.set(fn);
             }
         });
     });
@@ -159,8 +159,13 @@ const rasaApi = ((exports) => {
 
 const gptApi = ((exports) => {
     exports.say = async (msg) => {
-        const [headers, res] = await sendMsgToCrx.send(extensionId, sendMsgToCrx.getMsg('https://web-gpt-demo.com/chat/?username=1&content=' + encodeURIComponent(msg) + '&_stream=true', {}, {}));
-        return res;
+        try {
+            const [headers, res] = await sendMsgToCrx.send(extensionId, sendMsgToCrx.getMsg('https://web-gpt-demo.com/chat/?username=1&content=' + encodeURIComponent(msg) + '&_stream=true', {}, {}));
+            const xs = res.split('\n');
+            return JSON.parse(JSON.parse(xs[xs.length -3].slice(5)).body).response;
+        } catch(e) {
+            return '';
+        }
     };
     return exports;
 })({});
@@ -206,11 +211,11 @@ const main0 = async () => {
     };
     const wrapGptCheck0 = async (msg) => {
         const _msg = await gptApi.say(Store.Map.Check0Msg.replace(/{MSG}/g, msg));
-        return /1/.test(_msg);
+        return /是/.test(_msg);
     };
-    const wrapGptCheck1 = async (msg) => {
-        const _msg = await gptApi.say(Store.Map.Check1Msg.replace(/{MSG}/g, msg));
-        return /1/.test(_msg);
+    const wrapGptCheck1 = async (msg0, msg1) => {
+        const _msg = await gptApi.say(Store.Map.Check1Msg.replace(/{MSG0}/g, msg0).replace(/{MSG1}/g, msg1));
+        return /是/.test(_msg);
     };
     const Map0 = {};
     Map0['0'] = async () => {
@@ -289,12 +294,10 @@ const main0 = async () => {
                     return undefined;
                 } else {
                     const nn = --n;
-                    const x = Store.Map.logList[nn].check0 = await gptApi.check0(Store.Map.logList[nn].q);
-                    if(x) {
-                    } else {
-                        Store.Map.logList[nn].check1 = [];
-                    }
+                    const x = Store.Map.logList[nn].check0 = await wrapGptCheck0(Store.Map.logList[nn].q);
+                    Store.Map.logList[nn].check1 = [];
                     Store.MM();
+                    return 1;
                 }
             };
         })(Store.Map.logList.length);
@@ -313,16 +316,17 @@ const main0 = async () => {
                     return undefined;
                 } else {
                     const nn = --n;
-                    const x = Store.Map.logList[nn].check0 = await gptApi.check0(Store.Map.logList[nn].q);
-                    if(x) {
-                    } else {
-                        Store.Map.logList[nn].check1 = [];
+                    const index = nn / Store.Map.qaList.length >> 0;
+                    const indexindex = nn % Store.Map.qaList.length >> 0;
+                    if(Store.Map.logList[index].check0) {
+                        Store.Map.logList[index].check1 = await wrapGptCheck1(Store.Map.logList[index].q, Store.Map.qaList[indexindex].qs[0]);
+                        Store.MM();
                     }
-                    Store.MM();
+                    return 1;
                 }
             };
-        })(Store.Map.logList.length);
-        await Batch.run(2, fn);
+        })(Store.Map.logList.length * Store.Map.qaList.length);
+        await Batch.run(100, fn);
         return ret;
     };
     Map0['0-1-1-1-1-1-0'] = () => {
@@ -333,7 +337,10 @@ const main0 = async () => {
     };
     //Run.run(MapFn.new(Map0), '0', (p, status) => p + '-' + status, {}, () => {});
     document.getElementById('start').addEventListener('click', () => {
-        Store.Map = {};
+        Store.Map = {
+            Check0Msg: '你是如何理解这句话的------请用“是”或“否”来回答，用户的这个问题的真实意图是“和汽车相关”吗：“{MSG0}”',
+            Check1Msg: '你是如何理解这句话的------请用“是”或“否”来回答，用户的这个问题的真实意图是“{MSG1}”吗：“{MSG0}”',
+        };
         Store.MM();
         Msg.set('开始');
         Run.run(MapFn.new(Map0), '0', (p, status) => p + '-' + status, {}, () => {});
